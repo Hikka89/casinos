@@ -3,7 +3,7 @@ local computer = require("computer")
 local term = require("term")
 local event = require("event")
 local serialization = require("serialization")
-local admins = { "kostya89","HiKTO","OB1CHAM" }
+local admins = {"kostya89","Montaciiet","OB1CHAM","Andy_Steelrail"}
 local shell = require("shell")
 
 if not require("filesystem").exists("/lib/durexdb.lua") then
@@ -34,7 +34,7 @@ function updateFromGitHub()
     shell.execute("wget -fq https://raw.githubusercontent.com/Hikka89/casinos" .. app.name .. ".lua /home/app.lua")
 end
 
-local function hideToken(s)
+local function hideToken(s) --срань господня
     if not s then
         return nil
     end
@@ -71,6 +71,8 @@ local function drawError(reason)
     gpu.set(54, 3, 'Перезапустить')
     gpu.setBackground(0)
 
+
+
     while true do
         local _, _, x, y, _, nickname = event.pull("touch")
         for i = 1, #admins do
@@ -80,6 +82,9 @@ local function drawError(reason)
                 elseif (x >= 71) and (y <= 4) then
                     updateFromGitHub()
                     return
+               -- elseif (x >= 65) and (x <= 80) and (y >= 14) and (y <= 20) then
+               --     os.exit()
+               --     return
                 end
             end
         end
@@ -122,8 +127,17 @@ removeUsers(computer.users())
 while true do
     gpu.setForeground(0xffffff)
     result, errorMsg = pcall(loadfile("/home/app.lua"))
-    writeToFile("/home/crash.txt")
+    local crash = io.open("crash.txt","w")
+    crash:write(errorMsg)
+    crash:close()
+    gpu.setForeground(0xffffff)
+    gpu.setBackground(0x000000)
+    os.execute("cls")
+    print("Программа сдохла, зови этих личностей\nkostya89, Montaciiet, Andy_Steelrail,\n OB1CHAM")
     removeUsers(computer.users())
+    for i=1,#admins do
+        computer.addUser(admins[i])
+    end
     --drawError(errorMsg)
     os.exit()
 end
