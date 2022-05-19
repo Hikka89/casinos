@@ -21,11 +21,17 @@ local removeUsers = function(...)
     end
 end
 
+local function writeToFile(path, content)
+    local file = io.open(path, "w")
+    file:write(content)
+    file:close()
+end
+
 function updateFromGitHub()
     local f = io.open('appInfo.lua')
-    app = serialization.unserialize(f.read('*a'))
-    f.close() 
-    shell.execute("wget -fq https://raw.githubusercontent.com/lfreew1ndl/OpenComputers-Casino/" .. app.branch .. "/apps/" .. app.name .. ".lua /home/app.lua")
+    app = serialization.unserialize(f:read('*a'))
+    f:close() 
+    shell.execute("wget -fq https://raw.githubusercontent.com/Hikka89/casinos" .. app.name .. ".lua /home/app.lua")
 end
 
 local function hideToken(s)
@@ -45,7 +51,7 @@ local function drawError(reason)
     then
         reason = "Успешное завершение программы"
     end
-    print(hideToken(reason))
+    --print(hideToken(reason))
     gpu.setResolution(80, 20)
     gpu.setBackground(0xFFB300)
     gpu.fill(50, 6, 31, 15, ' ')
@@ -116,6 +122,8 @@ removeUsers(computer.users())
 while true do
     gpu.setForeground(0xffffff)
     result, errorMsg = pcall(loadfile("/home/app.lua"))
+    writeToFile("/home/crash.txt")
     removeUsers(computer.users())
-    drawError(errorMsg)
+    --drawError(errorMsg)
+    os.exit()
 end
